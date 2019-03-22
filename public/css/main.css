@@ -1,0 +1,108 @@
+body {
+    margin: 0;
+}
+
+.nav #playlist_list_logo {
+    width: 30px;
+    vertical-align: middle;
+    margin-right: 15px;
+}
+
+.nav .header_text {
+    margin: 0;
+    font-family: Courier New;
+    font-size: 25px;
+    margin: 20px;
+    margin-left: 50px;
+    /* margin: 20px; */
+    color: #616161;
+    display: inline-block;
+}
+
+.nav {
+    z-index: 9990;
+    /*top: 0;*/
+    /*width: 100%;*/
+    /*position: fixed;*/
+    background-color: rgba(255, 255, 255, 0.6);
+    border-bottom: 1px solid #c7c7c7;
+}
+
+.nav .nav-menu {
+    float: right;
+    margin-left: 50px;
+    margin: 27px;
+    margin-right: 100px;
+}
+
+.nav .nav-menu a {
+    display: inline-block;
+    color: #616161;
+    text-decoration: none;
+}
+
+.nav .nav-menu a::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 2px;
+    background: #616161;
+    transition: width .3s;
+}
+
+.nav .nav-menu a:hover::after {
+    width: 100%;
+/ / transition: width .3 s;
+}
+
+.nav .nav-menu li {
+    transition: all .05s;
+    font-size: 18px;
+    color: #616161;
+    font-weight: bold;
+    font-family: Arial;
+    display: inline-block;
+    margin-left: 15px;
+    list-style: none;
+}
+
+.active_page::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: #616161;
+    transition: width .3s;
+}
+
+::selection {
+    color: #fff;
+    background: #999;
+}
+
+/*.nav .nav-menu li:hover{*/
+/*border-bottom: 2px solid #616161;*/
+/*}*/
+/*SCROLLER*/
+.style-scroller::-webkit-scrollbar-track {
+    transition: all .5s;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: #F5F5F5;
+}
+
+.style-scroller::-webkit-scrollbar {
+    transition: all .5s;
+    width: 10px;
+    background-color: #F5F5F5;
+}
+
+.style-scroller::-webkit-scrollbar-thumb {
+    transition: all .5s;
+    background-color: #2196F3;
+    border-radius: 10px;
+}
+
+.style-scroller::-webkit-scrollbar-thumb:hover {
+    transition: all .5s;
+    background-color: #0074d1;
+}

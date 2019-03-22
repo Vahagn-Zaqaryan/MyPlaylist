@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta Tag -->
+    <meta charset="UTF-8">
+    <title>Playlist Store</title>
+    <!-- All CSS Plugins -->
+    <link rel="icon" href="img/music-player.png">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+
+</head>
+<body class="style-scroller">
+<div class="nav">
+    <a href="/" style="text-decoration: none">
+        <h2 class="header_text"><img src="img/music-player.png" alt="Playlist List" id="playlist_list_logo">Playlist
+            Store</h2>
+    </a>
+    <div class="nav-menu">
+        <li class="active_page">Home</li>
+        <% if( typeof user !== 'undefined'){ %>
+        <li><a href="/store">Store</a></li>
+        <li><a href="/my-playlists">My Playlists</a></li>
+        <% } %>
+        <!-- <li><a href="/payment">Payment</a></li> -->
+    </div>
+</div>
+
+<div class="main">
+    <div class="reg_bar">
+        <% if( typeof user !== 'undefined'){ %>
+
+        <div class="about">
+            <img style="border-radius: 10px;width: 100%" src=" <%=user.photos.split("=")[0]+"=250"%> ">
+            <p id="user_name"> <%=user.displayName%> </p>
+            <div id="menu">
+                <ul class="menu-link">
+                    <li><a href="/payment_settings">Payment Settings</a></li>
+                    <!-- <li><a href="/playlist-page">Bought Playlist</a></li> -->
+                </ul>
+            </div>
+
+            <div class="logout">
+                <a href="/logout">
+                    <button id="logout" style="font-size: 18px;">Logout</button>
+                </a>
+            </div>
+        </div>
+
+        <%}%>
+        <div class="login"
+        <% if( typeof user!== 'undefined'){%> style='display:none;'<%}%>>
+        <a href="/auth/google">
+            <button id="log"
+            <% if( typeof user!== 'undefined'){%> style='display:none;'<%}%> >Login</button></a>
+        <span>Through Google</span>
+    </div>
+</div>
+
+<div class="divider"></div>
+<div class="post">
+    <div class="post-title">
+        <h1>News</h1>
+    </div>
+    <% if(news.length == 0){ %>
+    <h1 class="nts_text">Nothing To Show</h1>
+    <% } %>
+    <% for(var i in news){ %>
+    <div class="playlist_box">
+        <a href="/playlist-page/<%= news[i].youtubeId %>">
+            <img src="<%= news[i].thumbnail %>" alt="" class="playlist_img">
+            <p class="playlist_name" title="<%= news[i].title%>"><%= news[i].title%></p>
+        </a>
+        <div class="playlist_statusBox">
+                   <span style='color: #2196f3;font-size: 37px;margin-right: 5px;vertical-align: bottom;'>
+                     $<%= news[i].price%>/month
+                   </span>
+        </div>
+    </div>
+    <%}%>
+</div>
+
+</div>
+
+
+<div class="footer">
+    <footer>
+
+        <p style="margin: 0px;"><span
+                style="vertical-align: 15px;margin-right: 10px;">© Copyright Playlist Store 2017</span> <img
+                src="img/certified.png" alt="" style="width: 80px;" title="Playlist Store is YouTube Certified"
+                alt="Playlist Store is YouTube Certified"></p>
+
+    </footer>
+</div>
+
+</body>
+</html>

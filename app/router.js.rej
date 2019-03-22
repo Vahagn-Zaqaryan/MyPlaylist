@@ -1,0 +1,9 @@
+diff a/app/router.js b/app/router.js	(rejected hunks)
+@@ -24,6 +24,7 @@
+ 
+ router.get('/create', create);
+ router.get('/main', main);
++router.get('/', main);
+ router.get('/playlist-list', playlist_l);
+ router.get('/playlist-page', playlist_p);
+ router.get('/payment', payment);

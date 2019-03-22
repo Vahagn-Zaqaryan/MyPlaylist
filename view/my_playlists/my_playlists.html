@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="icon" href="img/music-player.png">
+    <link rel="stylesheet" href="css/my_playlists_style.css">
+    <link rel="stylesheet" href="css/main.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <title>My Playlists</title>
+</head>
+<body>
+<div class="main">
+
+    <div id="scrollable" class="style-scroller">
+
+        <div class="nav">
+            <a href="/" style="text-decoration: none">
+                <h2 class="header_text"><img src="img/music-player.png" alt="Playlist List" id="playlist_list_logo">Playlist
+                    Store</h2>
+            </a>
+            <div class="nav-menu">
+                <li><a href="/">Home</a></li>
+                <% if( typeof user !== 'undefined'){ %>
+                <li><a href="/store">Store</a></li>
+                <li class="active_page">My Playlists</li>
+                <% } %>
+                <!-- <li><a href="/create">Create Playlist</a></li>
+                <li><a href="/payment">Payment</a></li> -->
+            </div>
+        </div>
+
+        <div class="playlist_list">
+            <script type="text/javascript">
+              var prices = {};
+              <%
+              for (i in prices) {
+                if (prices[i].price != null) { %>
+                  prices["<%=prices[i].id%>"] =
+                <
+                  %= prices[i].price % >;
+                <%
+                }
+              }
+              %>
+              function isNumberKey(evt) {
+                var charCode = (evt.which) ? evt.which : event.keyCode
+                if (charCode != 46 && charCode > 31
+                  && (charCode < 48 || charCode > 57))
+                  return false;
+
+                return true;
+              }
+              $(document).ready(function () {
+                sell_click = true;
+                sell_click_edit = true;
+                val = 0;
+                $(document).on('click', '.click-list', function () {
+                  if (sell_click == false) {
+                    alert("Sorry, But you need either set a price or cancel process.\n© Copyright Playlist Store 2017");
+                  }
+                  if (sell_click == true) {
+                    sell_click_edit = false;
+                    sell_click = false;
+                    var box = $(this).parent();
+                    $(this).parent().empty();
+                    box.append("<span style='color: #2196f3;font-size: 25px;margin-right: 5px;'>$</span><input type='text' autofocus class='playlist_price' size='1' placeholder='Price' onkeypress='return isNumberKey(event)' maxlength = '10'>");
+                    box.append('<button type="button" name="button" class="playlist_price_cancel">Cancel</button>');
+                    $(".playlist_price").focus();
+                    $('.playlist_statusBox button').click(function () {
+                      if ($(this).attr('class') == 'playlist_price_cancel') {
+                        $(this).parent().empty();
+                        box.append('<button type="button" name="button" class="click-list">Sell</button>');
+                        sell_click = true;
+                        sell_click_edit = true;
+                      }
+                    });
+
+                    $('.playlist_price').bind("enterKey", function (e) {
+                      if ($('.playlist_price').val().replace(/^\s+|\s+$/g, "").length != 0) {
+                        var val = Number($('.playlist_price').val());
+                        var p_id = $(box).attr("playlist-id");
+                        var value;
+                        if (val == 0)
+                          value = "Free";
+                        else
+                          value = "$" + val;
+                        $(box).find(".playlist_price_cancel").prop('disabled', true);
+                        $(box).find(".playlist_price").prop('disabled', true);
+                        $(box).css({"opacity": "0.5"});
+                        //Promise here
+                        $.post(
+                          "/sell",//url
+                          {//data
+                            price: val,
+                            id: p_id
+                          },
+                          function (data, status) {//Callback
+                            //alert("Data: " + data + "\nStatus: " + status);
+                            if (data == 'Inter') {
+                              document.location.href = "/payment_settings";
+                            } else if (data != 'OK') {
+                              value = typeof prices[p_id] !== "undefined" ? "$" + prices[p_id] : 0;
+                              alert("Error: Try again");
+                            }
+                            $(box).empty();
+                            $(box).css({"opacity": "1"});
+                            box.append('<button type="button" name="edit" class="playlist_price_edit" style="margin-right: 5px;"><img src="img/pencil-edit-button.png" alt="Edit"></button>');
+                            box.append("<span style='color: #2196f3;font-size: 37px;margin-right: 5px;vertical-align: bottom;'>" + value + "/month</span>");
+                            sell_click = true;
+                            sell_click_edit = true;
+                          }
+                        );
+                      }
+                    });
+
+                    $('.playlist_price').keyup(function (e) {
+                      if (e.keyCode == 13) {
+                        $(this).trigger("enterKey");
+                      }
+                    });
+
+                  }
+                });
+                // ************************//
+                // PLAYLIST PRICE EDIT PART//
+                // ************************//
+                $(document).on('click', '.playlist_price_edit', function () {
+                  if (sell_click_edit == false) {
+                    alert("Sorry, But you need either set a price or cancel process.\n© Copyright Playlist Store 2017");
+                  }
+                  if (sell_click_edit == true) {
+
+                    sell_click = false;
+                    sell_click_edit = false;
+                    var playlistPrice = $(this).attr("playlist-price");
+                    if (playlistPrice === undefined) {
+                      playlistPrice = "";
+                    }
+                    var box = $(this).parent();
+                    $(this).parent().empty();
+                    box.append("<span style='color: #2196f3;font-size: 25px;margin-right: 5px;'>$</span><input type='text' autofocus class='playlist_price' size='1' placeholder='Price' onkeypress='return isNumberKey(event)' maxlength = '10' value='" + playlistPrice + "'>");
+                    box.append('<button type="button" name="button" class="playlist_price_cancel">Cancel Selling</button>');
+                    $(".playlist_price").focus();
+
+                    $('.playlist_statusBox button').click(function () {
+                      if ($(this).attr('class') == 'playlist_price_cancel') {
+                        p_id = $(box).attr("playlist-id");
+                        that = this;
+                        $.post(
+                          "/cancelSale",//url
+                          {//data
+                            price: "cancelPlaylist",
+                            id: p_id
+                          },
+                          function (data, status) {
+                            if (data != "OK") {
+                              alert("Error:Try Letter");
+                            } else {
+                              $(that).parent().empty();
+                              box.append('<button type="button" name="button" class="click-list">Sell</button>');
+                            }
+                            sell_click_edit = true;
+                            sell_click = true;
+                          });
+                      }
+                    });
+
+                    $('.playlist_price').bind("enterKey", function (e) {
+                      if ($('.playlist_price').val().replace(/^\s+|\s+$/g, "").length != 0) {
+                        val = Number($('.playlist_price').val());
+                        if (val == 0)
+                          value = "Free";
+                        else
+                          value = "$" + val;
+                        $(box).find(".playlist_price_cancel").prop('disabled', true);
+                        $(box).find(".playlist_price").prop('disabled', true);
+                        $(box).css({"opacity": "0.5"});
+                        //Promise here
+                        //replace it whit setTimeout on line 138
+                        p_id = $(box).attr("playlist-id");
+                        $.post(
+                          "/sell",//url
+                          {//data
+                            price: val,
+                            id: p_id
+                          },
+                          function (data, status) {
+                            if (data != "OK") {
+                              value = typeof prices[p_id] !== "undefined" ? "$" + prices[p_id] : 0;
+                              alert("Error: Try again");
+                            }
+                            $(box).empty();
+                            $(box).css({"opacity": "1"});
+                            box.append('<button type="button" name="edit" class="playlist_price_edit" style="margin-right: 5px;"><img src="img/pencil-edit-button.png" alt="Edit"></button>');
+                            box.append("<span style='color: #2196f3;font-size: 37px;margin-right: 5px;vertical-align: bottom;'>" + value + "/month</span>");
+                            sell_click = true;
+                            sell_click_edit = true;
+                          }
+                        );
+
+                        //Promise end on line 138
+                      }
+                    });
+
+                    $('.playlist_price').keyup(function (e) {
+                      if (e.keyCode == 13) {
+                        $(this).trigger("enterKey");
+                      }
+                    });
+                  }
+                });
+                $(document).on('click', '.red_warn', function () {
+                  var box = $(this).parent();
+                  id = $(box).attr("playlist-id");
+
+                  $(box).find(".red_warn").prop('disabled', true);
+                  $(box.parent()).css({"opacity": "0.5"});
+                  p_id = $(box).attr("playlist-id");
+
+                  $.post(
+                    "/deletePlaylist",//url
+                    {//data
+                      id: id
+                    },
+                    function (data, status) {
+                      if (data != "OK") {
+                        value = typeof prices[p_id] !== "undefined" ? "$" + prices[p_id] : 0;
+                        alert("Error: Try again");
+                      }
+                      $(box).empty();
+                      $(box.parent()).fadeOut(300, function () {
+                        $(box.parent()).remove();
+                      });
+                    }
+                  );
+                });
+              });
+            </script>
+            <% if(typeof playlists !== "undefined"){ for(var i =0;i < playlists.length;i++){ %>
+            <div class="playlist_box">
+                <a href="/playlist-page/<%= playlists[i].youtubeId %> " target="_blank">
+                    <img src="<%= playlists[i].thumbnail %>" alt="" class="playlist_img">
+                    <p class="playlist_name" title="<%= playlists[i].title%>"><%= playlists[i].title%></p>
+                </a>
+                <div class="playlist_statusBox" playlist-id="<%= playlists[i].id %>">
+                    <%if(prices[i].price == null){%>
+                    <button type="button" name="button" class="click-list">Sell</button>
+                    <%}else{%>
+                    <button type="button" name="edit" class="playlist_price_edit" style="margin-right: 5px;"
+                            playlist-price="<%= prices[i].price%>"><img src="img/pencil-edit-button.png" alt="Edit">
+                    </button>
+                    <span style='color: #2196f3;font-size: 37px;margin-right: 5px;vertical-align: bottom;'>
+                $<%= prices[i].price%>/month
+              </span>
+                    <%}%>
+                </div>
+            </div>
+            <% } };%>
+
+            <% if(typeof boughtPlaylists !== "undefined"){ for(var i =0;i < boughtPlaylists.length;i++){ %>
+            <div class="playlist_box">
+                <a href="/playlist-page/<%= boughtPlaylists[i].youtubeId %> " target="_blank">
+                    <img src="<%= boughtPlaylists[i].thumbnail %>" alt="" class="playlist_img">
+                    <p class="playlist_name" title="<%= boughtPlaylists[i].title%>"><%= boughtPlaylists[i].title%></p>
+                </a>
+                <div class="playlist_statusBox" playlist-id="<%= boughtPlaylists[i].id %>">
+              <span style='color: #2196f3;font-size: 37px;margin-right: 5px;vertical-align: bottom;'>
+                $<%= boughtPrices[i].price%>/month
+              </span>
+                    <button type="button" name="n" class="red_warn">End</button>
+                </div>
+            </div>
+            <% } };%>
+        </div>
+
+    </div>
+
+    <div class="buy_bar">
+        <span style="color: #8c8c8c;font-family: arial;/* margin-top: 100px; */position: fixed;bottom: 33px;">Set price and you can sell you playlist and make money</span>
+        <a href="/store">
+            <button type="button" name="button" class="buy_button">Store</button>
+        </a>
+    </div>
+
+</div>
+</body>
+</html>

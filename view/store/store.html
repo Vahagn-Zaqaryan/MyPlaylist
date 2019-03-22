@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="icon" href="img/music-player.png">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/my_playlists_style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <title>Playlist Store</title>
+  </head>
+  <body>
+    <div class="main">
+      <div id="scrollable" class="style-scroller">
+
+        <!-- NAVIGATION -->
+        <div class="nav">
+            <a href="/" style="text-decoration: none">
+                <h2 class="header_text"><img src="img/music-player.png" alt="Playlist List" id="playlist_list_logo">Playlist Store</h2>
+            </a>
+            <div class="nav-menu">
+                <li><a href="/">Home</a></li>
+                <% if( typeof user !== 'undefined'){ %>
+                <li class="active_page">Store</li>
+                <li><a href="/my-playlists">My Playlists</a></li>
+                <% } %>
+                <!-- <li><a href="/payment">Payment</a></li> -->
+            </div>
+        </div>
+        <div class="playlist_list">
+          <script type="text/javascript">
+            $(document).ready(function() {
+              $(document).on('click', '.click-buy', function(){
+                var box = $(this).parent();
+                p_id = $(box).attr("playlist-id");
+                $(box).find(".click-buy").prop('disabled', true);
+                $(box.parent()).css({"opacity" : "0.5"});
+                $.post(
+                   "/buy",//url
+                   {//data
+                       id: p_id
+                   },
+                   function(data, status){//Callback
+                       //alert("Data: " + data + "\nStatus: " + status);
+                     alert(data);
+                     if (data == 'Inter') {
+                       document.location.href = "/payment_settings";
+                      //alert("Check your Interledger Account Settings");
+                    }else if(data != 'OK'){
+                      // value= typeof prices[p_id] !== "undefined" ? "$" + prices[p_id] : 0;
+                      alert("Error: Try again(Or Check your Interledger Account Settings");
+                      $(box.parent()).css({"opacity" : "1"});
+                      $(box).find(".click-buy").prop('disabled', false);
+                     }
+                     $(box.parent()).fadeOut(300, function() {
+                       $(box.parent()).remove();
+                      });
+                  }
+                 );
+              });
+            });
+          </script>
+          <% if(typeof playlists !== "undefined"){ for(var i =0;i < playlists.length;i++){ %>
+          <div class="playlist_box">
+            <a href="/playlist-page/<%= playlists[i].youtubeId %> " target="_blank">
+              <img src="<%= playlists[i].thumbnail %>" alt="" class="playlist_img">
+              <p class="playlist_name" title="<%= playlists[i].title%>"><%= playlists[i].title%></p>
+            </a>
+            <div class="playlist_statusBox" playlist-id = "<%= playlists[i].id %>">
+              <span style='color: #2196f3;font-size: 37px;margin-right: 5px;vertical-align: bottom;'>
+                $<%= prices[i].price%>/month
+              </span>
+              <button type="button" name="button" class="click-buy">Buy</button>
+            </div>
+          </div>
+          <% } } %>
+        </div>
+
+      </div>
+    </div>
+  </body>
+</html>

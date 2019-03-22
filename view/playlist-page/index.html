@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="../img/music-player.png">
+    <link rel="stylesheet" href="../css/style1.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/js/materialize.min.js"></script>
+    <title>Playlist Page</title>
+    <link rel="stylesheet" href="../css/main.css">
+
+</head>
+<body class="style-scroller">
+<div class="nav">
+    <a href="/" style="text-decoration: none">
+        <h2 class="header_text"><img src="../img/music-player.png" alt="Playlist List" id="playlist_list_logo">Playlist
+            Store</h2>
+    </a>
+    <div class="nav-menu">
+        <li><a href="/">Home</a></li>
+        <% if( typeof user !== 'undefined'){ %>
+        <li><a href="/store">Store</a></li>
+        <li><a href="/my-playlists">My Playlists</a></li>
+        <% } %>
+        <!-- <li><a href="/create">Create Playlist</a></li>
+        <li><a href="/payment">Payment</a></li> -->
+    </div>
+</div>
+<div class="playlist-info row">
+    <div class="col m6 s12 playlist-image">
+        <img width="100%" src="<%= info.thumbnail %>"/>
+    </div>
+    <div class="col m6 s12">
+        <div class="playlist-title"><%= info.title %></div>
+        <div class="playlist-length"><span><%= items.length %></span> videos</div>
+        <%if(typeof info.price !== "undefined"){%>
+        <div class="playlist-price darken-2 orange white-text chip">$<%= info.price%></div>
+        <%}%>
+    </div>
+</div>
+<div class="playlist-songs">
+    <table class="highlight">
+        <% for(var i=0;i
+        <items.length
+        ;i++){ %>
+        <tr>
+            <td>
+                <a href="https://youtube.com/watch?v=<%= items[i].snippet.resourceId.videoId%>">
+                    <img style="display: inline-block" <% if(typeof items[i].snippet.thumbnails !== "undefined"){ %>
+                    src="<%= items[i].snippet.thumbnails.default.url%>"> <%}%>
+                    <p style="display: inline-block;vertical-align: top;margin: 10px;"><%= items[i].snippet.title %></p>
+                </a>
+            </td>
+        </tr>
+        <% }%>
+    </table>
+</div>
+</body>
+</html>

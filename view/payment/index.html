@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta Tag -->
+    <meta charset="UTF-8">
+    <title>Playlist Store</title>
+    <!-- All CSS Plugins -->
+    <link rel="icon" href="img/music-player.png">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <style media="screen">
+        .main h1 {
+            color: #8c8c8c;
+            text-align: center;
+        }
+
+        .header {
+            border-bottom: 1px solid #c7c7c7
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .input-field {
+            position: absolute;
+            left: 50%;
+            width: 500px;
+            margin-left: -250px;
+            font-size: 20px;
+            top: 100px;
+        }
+
+        /*.input-line{*/
+        /*position: absolute;*/
+        /*left:50%;*/
+        /*margin-left: -50px;*/
+        /*border-radius: 5px;*/
+        /*}*/
+        /*#add-button{*/
+        /*border:1px solid green;*/
+        /*height:25px;*/
+        /*width:50px;*/
+        /*text-align: center;*/
+        /*border-radius: 10px;*/
+        /*position: absolute;*/
+        /*right:10px;*/
+        /*}*/
+        .form-style {
+            max-width: 400px;
+            margin: 20px auto 50px auto;
+            background: #fff;
+            border-radius: 2px;
+            padding: 20px;
+            font-family: Georgia, "Times New Roman", Times, serif;
+        }
+
+        .form-style h1 {
+            display: block;
+            text-align: center;
+            padding: 0;
+            margin: 0px 0px 20px 0px;
+            color: #5C5C5C;
+            font-size: x-large;
+        }
+
+        .form-style ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .form-style li {
+            display: block;
+            padding: 9px;
+            border: 1px solid #DDDDDD;
+            margin-bottom: 30px;
+            border-radius: 3px;
+        }
+
+        .form-style li:last-child {
+            border: none;
+            margin-bottom: 0px;
+            text-align: center;
+        }
+
+        .form-style li > label {
+            display: block;
+            float: left;
+            margin-top: -19px;
+            background: #FFFFFF;
+            height: 14px;
+            padding: 2px 5px 2px 5px;
+            color: #B9B9B9;
+            font-size: 15px;
+            overflow: hidden;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .form-style input[type="text"],
+        .form-style input[type="password"] {
+            box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            width: 100%;
+            display: block;
+            outline: none;
+            border: none;
+            height: 25px;
+            line-height: 25px;
+            font-size: 16px;
+            padding: 0;
+            font-family: Arial;
+            margin: 4px;
+        }
+
+        .form-style li > span {
+            background: #F3F3F3;
+            display: block;
+            padding: 3px;
+            margin: 0 -9px -9px -9px;
+            text-align: center;
+            color: #C0C0C0;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11px;
+        }
+
+        .form-style textarea {
+            resize: none;
+        }
+
+        .form-style input[type="submit"],
+        .form-style input[type="button"] {
+            outline: none;
+            transition: all .5s;
+            background-color: #2196F3;
+            font-family: arial;
+            font-weight: bold;
+            font-size: 25px;
+            color: #fff;
+            border-radius: 10px;
+            padding: 8px 35px;
+            border: none;
+        }
+
+        .form-style input[type="submit"]:hover,
+        .form-style input[type="button"]:hover {
+            background-color: #0074d1;
+        }
+    </style>
+</head>
+<body class="style-scroller">
+<div class="nav">
+    <a href="/" style="text-decoration: none">
+        <h2 class="header_text"><img src="img/music-player.png" alt="Playlist List" id="playlist_list_logo">Playlist
+            Store</h2>
+    </a>
+    <div class="nav-menu">
+        <li><a href="/">Home</a></li>
+        <% if( typeof user !== 'undefined'){ %>
+        <li><a href="/store">Store</a></li>
+        <li><a href="/my-playlists">My Playlists</a></li>
+        <% } %>
+        <!-- <li><a href="/payment">Payment</a></li> -->
+    </div>
+</div>
+
+<div class="main" style="text-align: center;">
+    <div class="header">
+        <h1>Payment Settings</h1>
+    </div>
+
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $('input#username').keypress(function () {
+          $("#error").css({"visibility": "hidden"});
+        });
+        $('input#password').keypress(function () {
+          $("#error").css({"visibility": "hidden"});
+        });
+        $(document).on('click', '.submit_button_interledger', function () {
+          event.preventDefault();
+          if ($("#username").val().replace(/^\s+|\s+$/g, "").length != 0 && $("#password").val().replace(/^\s+|\s+$/g, "").length != 0) {
+            var username = $("#username").val();
+            var password = $("#password").val();
+            $.post(
+              "/inter",//url
+              {//data
+                int: username,
+                intp: password
+              },
+              function (data, status) {//Callback
+                //alert("Data: " + data + "\nStatus: " + status);
+                if (data != 'OK') {
+                  //value= typeof prices[p_id] !== "undefined" ? "$" + prices[p_id] : 0;
+                  alert("Error: Try again");
+                } else {
+                  $("#error").css({"display": "none"});
+                  $("#success").css({"display": "block"});
+                }
+              }
+            );
+          } else {
+            $("#error").css({"visibility": "visible"});
+          }
+        });
+      });
+    </script>
+    <p style="color: red;margin-top: 25px;visibility: hidden;" id="error">You need to enter and Username and
+        Password</p>
+    <p style="color: blue;margin-top: 25px;display: none;" id="success">Updated! :)</p>
+    <form class="form-style">
+        <ul>
+            <li>
+                <label for="name">Interledger Username</label>
+                <input type="text" name="name" maxlength="100" id="username" placeholder="<%if(user.interledger != "" &&
+                user.interledger != null){%><%=user.interledger%><%}else{%> <%='Username'%><%}%>">
+                <span>Enter your interledger Username here</span>
+            </li>
+            <li>
+                <label for="url">Interledger password</label>
+                <input type="password" name="url" id="password" placeholder="********">
+                <span>Enter your interledger Password here</span>
+            </li>
+            <li>
+                <input type="submit" value="Update" class="submit_button_interledger">
+            </li>
+        </ul>
+    </form>
+</div>
+
+
+<div class="footer">
+    <footer>
+
+        <p style="margin: 0px;"><span
+                style="vertical-align: 15px;margin-right: 10px;">© Copyright Playlist Store 2017</span> <img
+                src="img/certified.png" alt="" style="width: 80px;" title="Playlist Store is YouTube Certified"
+                alt="Playlist Store is YouTube Certified"></p>
+
+    </footer>
+</div>
+
+</body>
+</html>
